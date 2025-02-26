@@ -1,3 +1,5 @@
 .venv
 .DStore
 **/__pycache__
+**/migrations
+db.sqlite3

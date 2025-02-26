@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Actualités{% endblock %}
+
+{% block content %}
+<div class="container px-5 py-12 mx-auto">
+  <h2 class="text-3xl font-bold text-center mb-8">Actualités de notre banque</h2>
+
+  {% if user.is_conseiller or user.is_superuser %}
+    <div class="text-center mb-8">
+      <a href="{% url 'add_news' %}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+        Ajouter une actualité
+      </a>
+    </div>
+  {% endif %}
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for news in news_list %}
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">{{ news.title }}</h3>
+            <p class="text-gray-600 mb-4">{{ news.content }}</p>
+            <div class="text-sm text-gray-500">
+                <p>{{ news.publication_date|date:"d/m/Y" }}</p>
+                {% if request.user == news.author or request.user.is_superuser %}
+                    <form method="post" class="mt-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="news_id" value="{{ news.id }}">
+                        <button type="submit" 
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')"
+                                class="text-red-600 hover:text-red-800 font-medium">
+                            Supprimer
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-center text-gray-500 col-span-3">Aucune actualité disponible</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
