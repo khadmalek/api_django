@@ -35,7 +35,7 @@ class LoanRequest(models.Model):
     franchise_code = models.CharField(max_length=10)
     urban_rural = models.CharField(max_length=50)
     low_doc = models.BooleanField(default=False)    # documentation allégée (oui/non)
-    disbursement_gross = models.DecimalField(max_digits=12, decimal_places=2)  # montant du prêt
+    disbursement_gross = models.DecimalField(max_digits=12, decimal_places=2)  # montant du prêt versé
     gr_appv = models.DecimalField(max_digits=12, decimal_places=2)  # montant approuvé
     rev_line_cr = models.BooleanField(default=False)  # ligne de crédit renouvelable (oui/non)
     request_result = models.CharField(max_length=10, default="refused")
