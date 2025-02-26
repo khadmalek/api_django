@@ -7,7 +7,14 @@ from .forms import LoginForm, CreateClientForm, RequestForm, NewsForm
 from .models import User, LoanRequest, News
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.shortcuts import redirect
+from .api_utils import loan_request_to_api
+from dotenv import load_dotenv
+import os
 
+
+load_dotenv(dotenv_path="../../.env")
+BANK_NAME = os.getenv("BANK_NAME")
+BANK_STATE = os.getenv("BANK_STATE")
 
 
 # Create your views here.
@@ -127,12 +134,11 @@ class AddNewsView(LoginRequiredMixin, View):        # LoginRequiredMixin remplac
 
 
 # region -loan request
-class LoanRequestView(View) :       # OK+-
+class LoanRequestView(View):
     model = LoanRequest
     form_class = RequestForm
     template_name = 'loan_request.html'
-    context_object_name = 'loan_request'
-    
+
     def get(self, request, *args, **kwargs):
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
@@ -140,11 +146,55 @@ class LoanRequestView(View) :       # OK+-
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            loan_request = form.save()
-            messages.success(request, 'Demande de prêt enregistrée avec succès')
-            return redirect('home') 
-        return render(request, self.template_name, {'form': form})    
+            loan_request = form.save(commit=False)
+            loan_request.client = request.user
+            loan_request.save()
 
+            # Préparer les données pour l'API dans le format attendu
+            donnees = {
+                "ApprovalFY": int(loan_request.approval_fy),
+                "Bank": BANK_NAME,
+                "BankState": BANK_STATE,
+                "City": loan_request.city.upper(),
+                "CreateJob": loan_request.create_job,
+                "DisbursementGross": float(loan_request.disbursement_gross),
+                "FranchiseCode": int(loan_request.franchise_code),
+                "GrAppv": float(loan_request.gr_appv),
+                "LowDoc": 1 if loan_request.low_doc else 0,
+                "NAICS": int(loan_request.naics),
+                "NewExist": int(loan_request.new_exist),
+                "NoEmp": loan_request.no_emp,
+                "RetainedJob": loan_request.retained_job,
+                "RevLineCr": 1 if loan_request.rev_line_cr else 0,
+                "State": loan_request.state,
+                "Term": loan_request.term,
+                "UrbanRural": int(loan_request.urban_rural),
+                "Zip": int(loan_request.zip_code.replace("-", ""))  
+            }
+
+            try:
+                # Appeler l'API
+                api_result = loan_request_to_api(donnees)
+
+                # Mettre à jour le résultat dans la base de données
+                loan_request.request_result = api_result
+                loan_request.save()
+
+                return render(request, 'loan_result.html', {
+                    'result': api_result,
+                    'loan_request': loan_request,
+                    'success': True
+                })
+
+            except Exception as e:
+                messages.error(request, f"Une erreur s'est produite lors de l'analyse: {str(e)}")
+                return render(request, 'loan_result.html', {
+                    'error': str(e),
+                    'loan_request': loan_request,
+                    'success': False
+                })
+
+        return render(request, self.template_name, {'form': form})
     
 
 
