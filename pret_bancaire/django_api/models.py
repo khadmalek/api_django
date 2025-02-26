@@ -8,26 +8,24 @@ from django.contrib.auth import get_user_model
 
 
 
-class Users(AbstractUser):
-    first_name = models.CharField(max_length=150, blank=True) 
-    last_name = models.CharField(max_length=150, blank=True) 
+class User(AbstractUser):
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
+    sexe = models.CharField(max_length=50, null = True, default=0)
     birth_date = models.DateField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    USER_TYPE_CHOICES = [
-        ("client", "Client"),
-        ("conseiller", "Conseiller"),]
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default="client")  # choix limités
+    user_type = models.CharField(max_length=10, default="client")
 
 
 class LoanRequest(models.Model):
-    client = models.ForeignKey(Users, on_delete=CASCADE, related_name="loan_requests")  # client de la demande
-    conseiller = models.ForeignKey(Users, on_delete=SET_NULL, null=True, blank=True, related_name="managed_loans")  # conseiller - peut être nul
+    client = models.ForeignKey(User, on_delete=CASCADE, related_name="loan_requests")  # client de la demande
+    conseiller = models.ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name="managed_loans")  # conseiller - peut être nul
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=20)
     bank = models.CharField(max_length=100)
     bank_state = models.CharField(max_length=100)
-    naics = models.CharField(max_length=10) 
+    naics = models.CharField(max_length=10)
     approval_fy = models.CharField(max_length=4)    # année d'approbation
     term = models.PositiveIntegerField()            # durée en mois
     no_emp = models.PositiveIntegerField()          # nombre d'employés
@@ -40,13 +38,13 @@ class LoanRequest(models.Model):
     disbursement_gross = models.DecimalField(max_digits=12, decimal_places=2)  # montant du prêt
     gr_appv = models.DecimalField(max_digits=12, decimal_places=2)  # montant approuvé
     rev_line_cr = models.BooleanField(default=False)  # ligne de crédit renouvelable (oui/non)
-    request_result = models.CharField(max_length=10, choices=[("approved", "Approved"), ("refused", "Refused")], default="refused")
+    request_result = models.CharField(max_length=10, default="refused")
     request_date = models.DateTimeField(auto_now_add=True)  # date heure automatiques
-    updated_at = updated_at = models.DateTimeField(auto_now=True)   # si jamais un conseiller modifie une info par exemple modifie le statut
+    updated_at = updated_at = models.DateTimeField(auto_now=True)
 
 
 class News(models.Model):
-    author = models.ForeignKey("Users", on_delete=CASCADE, related_name="news")  # conseiller auteur de l'article
+    author = models.ForeignKey(User, on_delete=CASCADE, related_name="news")  # conseiller auteur de l'article
     title = models.CharField(max_length=200)
     content = models.TextField()
     publication_date = models.DateTimeField(auto_now_add=True)  # date auto
