@@ -73,7 +73,7 @@ def loan_request_to_api(donnees : dict) :
     
     if response.status_code == 200 :
         reponse_dict = json.loads(response.content.decode("utf-8"))
-        return reponse_dict["resultat"]
+        return reponse_dict["result"]
     return type(response)
 
 

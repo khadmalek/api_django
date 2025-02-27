@@ -177,7 +177,7 @@ class LoanRequestView(View):
                 api_result = loan_request_to_api(donnees)
 
                 # Mettre à jour le résultat dans la base de données
-                loan_request.request_result = api_result
+                loan_request.request_result = "accepted" if api_result else "refused"
                 loan_request.save()
 
                 return render(request, 'loan_result.html', {
