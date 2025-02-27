@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HomePageView, AuthenticationView, CreateClientView, ProfilView, LoanRequestView, BankNewsView, AddNewsView, logout_view
+from .views import HomePageView, AuthenticationView, CreateClientView, ProfilView, LoanRequestView, BankNewsView, AddNewsView, logout_view, LoanRequestsListView
 from django.contrib.auth import views as auth_views
 
 
@@ -12,5 +12,6 @@ urlpatterns = [
     path('news/', BankNewsView.as_view(), name='news'),
     path('add_news/', AddNewsView.as_view(), name='add_news'),
     path('logout/', logout_view, name='logout'),
+    path('loan_requests_list/', LoanRequestsListView.as_view(), name='loan_requests_list'),
     
 ]

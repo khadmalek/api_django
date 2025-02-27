@@ -11,10 +11,10 @@ from django.contrib.auth import get_user_model
 class User(AbstractUser):
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
-    sexe = models.CharField(max_length=50, null = True, default=0)
+    sexe = models.CharField(max_length=50, choices=[("homme", "homme"), ("femme", "femme")], null = True)
     birth_date = models.DateField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    user_type = models.CharField(max_length=10, default="client")
+    user_type = models.CharField(max_length=10, choices=[("client", "client"), ("conseiller", "conseiller")], default="client")
 
 
 class LoanRequest(models.Model):
@@ -38,7 +38,12 @@ class LoanRequest(models.Model):
     disbursement_gross = models.DecimalField(max_digits=12, decimal_places=2)  # montant du prêt versé
     gr_appv = models.DecimalField(max_digits=12, decimal_places=2)  # montant approuvé
     rev_line_cr = models.BooleanField(default=False)  # ligne de crédit renouvelable (oui/non)
-    request_result = models.CharField(max_length=10, default="refused")
+    STATUS_CHOICES = [
+        ('pending', 'En attente'),
+        ('approved', 'Approuvé'),
+        ('rejected', 'Rejeté'),
+    ]
+    request_result = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     request_date = models.DateTimeField(auto_now_add=True)  # date heure automatiques
     updated_at = updated_at = models.DateTimeField(auto_now=True)
 

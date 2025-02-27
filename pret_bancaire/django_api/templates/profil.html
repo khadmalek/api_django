@@ -38,7 +38,17 @@
           <p class="text-gray-600">{{ user.birth_date }}</p>
         </div>
         
-        <div class="mt-6">
+        <div class="mt-6 space-y-3">
+
+          {% if user.user_type == 'conseiller' %}
+            <a href="{% url 'loan_requests_list' %}" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 text-center block">
+            Demandes de prêts
+          {% else %}
+            <a href="{% url 'loan_requests_list' %}" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 text-center block">
+              Mes demandes de prêts
+            </a>
+          {% endif %}
+          
           <a href="{% url 'home' %}" class="w-full bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 text-center block">
             Retour
           </a>

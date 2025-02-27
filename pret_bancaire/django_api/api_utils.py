@@ -54,7 +54,7 @@ def get_token(email = EMAIL, password = PASSWORD) :
     
     response = requests.post(url = url, headers = headers, data = data)
     if response.status_code == 200 :
-        return response.json()["result"]
+        return response.json()["access_token"]
     else : 
         raise Exception(f"Erreur API : {response.status_code}")
 
@@ -101,29 +101,29 @@ def loan_request_to_api(donnees : dict) :
 
 
 if __name__ == "__main__" :
-    # # token = get_token(email, password)
+    # token = get_token(email, password)
     
-    # data = {
-    # "ApprovalFY": 2008,
-    # "Bank": "BBCN BANK",
-    # "BankState": "CA",
-    # "City": "SPRINGFIELD",
-    # "CreateJob": 2,
-    # "DisbursementGross": 20000,
-    # "FranchiseCode": 1,
-    # "GrAppv": 20000,
-    # "LowDoc": 0,
-    # "NAICS": 453110,
-    # "NewExist": 1,
-    # "NoEmp": 4,
-    # "RetainedJob": 250,
-    # "RevLineCr": 0,
-    # "State": "TN",
-    # "Term": 6,
-    # "UrbanRural": 1,
-    # "Zip": 37172
-    # }
+    data = {
+    "ApprovalFY": 2008,
+    "Bank": "BBCN BANK",
+    "BankState": "CA",
+    "City": "SPRINGFIELD",
+    "CreateJob": 2,
+    "DisbursementGross": 20000,
+    "FranchiseCode": 1,
+    "GrAppv": 20000,
+    "LowDoc": 0,
+    "NAICS": 453110,
+    "NewExist": 1,
+    "NoEmp": 4,
+    "RetainedJob": 250,
+    "RevLineCr": 0,
+    "State": "TN",
+    "Term": 6,
+    "UrbanRural": 1,
+    "Zip": 37172
+    }
     
-    # print(loan_request_to_api(donnees = data))
+    print(loan_request_to_api(donnees = data))
 
-    print(account_activation())
+    # print(account_activation())
