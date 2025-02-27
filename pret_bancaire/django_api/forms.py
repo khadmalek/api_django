@@ -28,7 +28,7 @@ class CreateClientForm(forms.ModelForm) :
         widget=forms.DateInput(format="%Y-%m-%d", attrs={'type': 'date'}))
 
     class Meta:
-        model = User
+        model = User    
         fields = ['first_name', 'last_name', 'sexe', 'birth_date', 'email', 'password', 'confirm_password']
         labels = {
             "first_name" : "Prénom", 
@@ -38,19 +38,21 @@ class CreateClientForm(forms.ModelForm) :
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-        birth_date = self.cleaned_data['birth_date']
-        
+        birth_date = cleaned_data.get('birth_date')
+
         if birth_date > datetime.now().date():
             raise forms.ValidationError("La date de naissance ne peut pas être dans le futur")
         age = (date.today() - birth_date).days // 365
-        if age < 18 :
+        if age < 18:
             raise forms.ValidationError("Vous devez être majeur")
-        
+        return cleaned_data
+
+    def clean_confirm_password(self):
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError("Les mots de passe ne correspondent pas")
-        return cleaned_data
+        return confirm_password
 
     def save(self, commit=True):
         # Hasher le mot de passe
