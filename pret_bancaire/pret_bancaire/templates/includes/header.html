@@ -10,7 +10,7 @@
           </a>
           <ul class="flex items-center hidden space-x-8 lg:flex">
             <li><a href="{% url 'home' %}" class="font-medium tracking-wide text-gray-100 transition-colors duration-200 hover:text-teal-accent-400">Accueil</a></li>
-            <li><a href="{% url 'news' %}" class="font-medium tracking-wide text-gray-100 transition-colors duration-200 hover:text-teal-accent-400">Actualités</a></li>
+            <li><a href="{% url 'news' %}" class="font-medium tracking-wide text-gray-100 transition-colors duration-200 hover:text-teal-accent-400">Contact</a></li>
             {% if user.is_authenticated %}
             <li><a href="{% url 'loan_request' %}" class="font-medium tracking-wide text-gray-100 transition-colors duration-200 hover:text-teal-accent-400">Demande de garantie SBA</a></li>
             {% endif %}
